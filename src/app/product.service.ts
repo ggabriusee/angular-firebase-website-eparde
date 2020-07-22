@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from '@angular/fire/database';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,11 @@ export class ProductService {
   }
 
   getAll(){
-    return this.db.list('/products').snapshotChanges(); //snapshot to also get uid
+    //snapshot to also get uid, which is stored in .key and the actual obeject in payload.val()
+    return this.db.list('/products').snapshotChanges()
+    .pipe(map( (users: any[]) => users.map(user => {
+      return { id: user.key, ...user.payload.val() }
+    })));
   }
 
   getOne(id){

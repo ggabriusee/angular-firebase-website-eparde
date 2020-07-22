@@ -19,10 +19,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   itemCount: number;
 
   constructor(private productService: ProductService) {
-    this.prodSubscription = this.productService.getAll().pipe(map( (users: any[]) => 
-    users.map(user => {
-      return { id: user.key, ...user.payload.val() }
-    })))
+    this.prodSubscription = this.productService.getAll()
     .subscribe(products => {
       this.products = products;
       this.initDataTable(products);
