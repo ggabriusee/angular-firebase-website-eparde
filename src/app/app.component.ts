@@ -16,7 +16,12 @@ export class AppComponent implements OnDestroy{
     this.authSubscribtion = auth.user$.subscribe(user => {
       if (user){
         userService.save(user); // should be in registration, but now we get up to date data
-        router.navigateByUrl(localStorage.getItem('returnUrl'));
+
+        let returnUrl = localStorage.getItem('returnUrl');
+        if (returnUrl){ //turi ivykti tik viena karta po login()
+          localStorage.removeItem('returnUrl');
+          router.navigateByUrl(returnUrl);
+        }
       }
     });
   }
