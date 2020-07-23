@@ -1,23 +1,29 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { AppUser } from '../models/app-user';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { ShoppingCartService } from '../shopping-cart.service';
+import { ShoppingCart } from '../models/shopping-cart';
 
 @Component({
   selector: 'bs-navbar',
   templateUrl: './bs-navbar.component.html',
   styleUrls: ['./bs-navbar.component.css']
 })
-export class BsNavbarComponent implements OnDestroy{
+export class BsNavbarComponent implements OnInit, OnDestroy{
   appUser: AppUser;
-  appUserSubscribtion: Subscription;
+  appUserSub: Subscription;
+  cart$: Observable<ShoppingCart>;
 
-  constructor(private auth: AuthService){
-    this.appUserSubscribtion = auth.appUser$.subscribe(appUser => this.appUser = appUser);
-  }
+  constructor(private auth: AuthService, private cartService: ShoppingCartService){}
 
   logout(){
     this.auth.logout();
+  }
+
+  async ngOnInit(){
+    this.appUserSub = this.auth.appUser$.subscribe(appUser => this.appUser = appUser);
+    this.cart$ = await this.cartService.getCart();
   }
 
   ngOnDestroy(){
@@ -25,7 +31,7 @@ export class BsNavbarComponent implements OnDestroy{
     //this navbar component will only have one instance of it in the DOM
     //and only one subscribtion through out the whole lifetime of the application
     //so no memory leaks, when user exists from app, subscribtion closes.
-    this.appUserSubscribtion.unsubscribe();
+    this.appUserSub.unsubscribe();
   }
 
 
