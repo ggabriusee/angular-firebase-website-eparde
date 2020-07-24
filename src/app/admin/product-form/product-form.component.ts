@@ -14,7 +14,7 @@ import { Product } from 'src/app/models/product';
 export class ProductFormComponent implements OnInit {
 
   categories$;
-  product :Product= {};
+  product: Product= {};
   private productId;
 
   constructor(

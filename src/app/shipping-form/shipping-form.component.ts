@@ -5,6 +5,7 @@ import { Order } from '../models/order';
 import { Router } from '@angular/router';
 import { OrderService } from '../order.service';
 import { ShoppingCart } from '../models/shopping-cart';
+import { ShippingInfo } from '../models/shippingInfo';
 
 @Component({
   selector: 'shipping-form',
@@ -14,7 +15,7 @@ import { ShoppingCart } from '../models/shopping-cart';
 export class ShippingFormComponent implements OnInit, OnDestroy {
 
   @Input('cart') cart: ShoppingCart;
-  shipping = {};
+  shipping: ShippingInfo = {};
   userSub: Subscription;
   userId: string;
 
