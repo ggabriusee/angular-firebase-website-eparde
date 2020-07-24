@@ -15,7 +15,7 @@ export class ProductFormComponent implements OnInit {
 
   categories$;
   product: Product= {};
-  private productId;
+  productId;
 
   constructor(
     private router: Router,
