@@ -5,6 +5,12 @@
   <p>
     You have {{ cart.totalItemsCount }} items in your shopping cart.
   </p>
+  <button 
+    *ngIf="cart.items.length" 
+    (click)="clearCart()" 
+    class="btn btn-light btn-sm">
+    Clear Shopping Cart
+  </button>
   <table class="table">
     <thead>
       <th></th>
@@ -33,5 +39,9 @@
       </tr>
     </tfoot>
   </table>
-  <button (click)="clearCart()"class="btn btn-danger btn-sm">Clear Shopping Cart</button>
+  <a
+    routerLink="/check-out" 
+    *ngIf="cart.items.length" 
+    class="btn btn-primary">Check Out
+  </a>
 </div>
