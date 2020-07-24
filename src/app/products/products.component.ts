@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProductService } from '../product.service';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from '../models/product';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ShoppingCartService } from '../shopping-cart.service';
+import { ShoppingCart } from '../models/shopping-cart';
 
 @Component({
   selector: 'app-products',
@@ -17,35 +18,37 @@ export class ProductsComponent implements OnInit, OnDestroy{
   filteredProducts: Product[] = [];
   category;
   productSub: Subscription;
-  cart: any;
-  cartSub: Subscription;
+  cart$: Observable<ShoppingCart>;
 
   constructor(
     private route: ActivatedRoute,
     private productsService: ProductService,
-    private cartService: ShoppingCartService) {
+    private cartService: ShoppingCartService) {}
 
-    this.productSub = productsService.getAll().pipe(switchMap(products => {
+  async ngOnInit() {
+    // onInit because constructor canot be async
+    this.cart$ = await this.cartService.getCart();
+    this.populateProducts();
+  }
+
+  private populateProducts(){
+    this.productSub = this.productsService.getAll().pipe(switchMap(products => {
       this.products = products;
       return this.route.queryParamMap;
     })).subscribe(params =>{
       this.category = params.get('category');
-
-      this.filteredProducts = this.category ? 
-      this.products.filter(p => p.category === this.category) : 
-      this.products;
+      this.applyFilter();
       });
-    
-   }
+  }
 
-  async ngOnInit() {
-    // onInit because constructor canot be async
-    this.cartSub = (await this.cartService.getCart())
-    .subscribe(cart => this.cart = cart);
+  private applyFilter(){
+    this.filteredProducts = this.category ? 
+    this.products.filter(p => p.category === this.category) : 
+    this.products;
   }
 
   ngOnDestroy(){
-    this.cartSub.unsubscribe();
+    this.productSub.unsubscribe();
   }
 
 }
